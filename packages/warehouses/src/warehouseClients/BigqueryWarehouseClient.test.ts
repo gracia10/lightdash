@@ -31,6 +31,33 @@ describe('BigqueryWarehouseClient', () => {
             warehouse.client.createQueryJob as jest.Mock,
         ).toHaveBeenCalledTimes(1);
     });
+    it('passes drive readonly scopes for BigQuery external tables', () => {
+        const mockBigQuery = jest.fn();
+
+        jest.isolateModules(() => {
+            jest.doMock('@google-cloud/bigquery', () => ({
+                ...jest.requireActual('@google-cloud/bigquery'),
+                BigQuery: mockBigQuery,
+            }));
+
+            const { BigqueryWarehouseClient: BigqueryWarehouseClientWithMock } =
+                // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports
+                require('./BigqueryWarehouseClient') as typeof import('./BigqueryWarehouseClient');
+            expect(
+                new BigqueryWarehouseClientWithMock(credentials),
+            ).toBeDefined();
+        });
+
+        expect(mockBigQuery).toHaveBeenCalledWith(
+            expect.objectContaining({
+                projectId: credentials.project,
+                scopes: [
+                    'https://www.googleapis.com/auth/bigquery',
+                    'https://www.googleapis.com/auth/drive.readonly',
+                ],
+            }),
+        );
+    });
     it('expect schema with bigquery types mapped to dimension types', async () => {
         const getTableMock = jest
             .fn()

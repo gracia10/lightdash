@@ -44,6 +44,11 @@ import { normalizeUnicode } from '../utils/sql';
 import WarehouseBaseClient from './WarehouseBaseClient';
 import WarehouseBaseSqlBuilder from './WarehouseBaseSqlBuilder';
 
+export const BIGQUERY_OAUTH_SCOPES = [
+    'https://www.googleapis.com/auth/bigquery',
+    'https://www.googleapis.com/auth/drive.readonly',
+] as const;
+
 export enum BigqueryFieldType {
     STRING = 'STRING',
     INTEGER = 'INTEGER',
@@ -231,6 +236,7 @@ export class BigqueryWarehouseClient extends WarehouseBaseClient<CreateBigqueryC
                 location: credentials.location || undefined,
                 maxRetries: credentials.retries,
                 apiEndpoint: credentials.accessUrl || undefined,
+                scopes: [...BIGQUERY_OAUTH_SCOPES],
 
                 ...(credentials.authenticationType ===
                 BigqueryAuthenticationType.ADC

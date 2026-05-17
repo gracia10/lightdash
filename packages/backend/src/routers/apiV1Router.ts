@@ -1,5 +1,6 @@
 import { AuthorizationError } from '@lightdash/common';
 import {
+    BIGQUERY_OAUTH_SCOPES,
     DATABRICKS_DEFAULT_OAUTH_CLIENT_ID,
     isDatabricksCliOAuthClientId,
 } from '@lightdash/warehouses';
@@ -455,7 +456,7 @@ apiV1Router.get(
     '/login/bigquery',
     storeOIDCRedirect,
     passport.authenticate('google', {
-        scope: ['profile', 'email', 'https://www.googleapis.com/auth/bigquery'],
+        scope: ['profile', 'email', ...BIGQUERY_OAUTH_SCOPES],
         accessType: 'offline',
         prompt: 'consent',
         session: false,
